@@ -1,5 +1,7 @@
 
 window.onload = function() {
+  const LINELEN = Math.sqrt(50*50 + 50 * 50);
+
 	var canvas = document.getElementById("canvas"),
 		context = canvas.getContext("2d"),
 		width = canvas.width = window.innerWidth,
@@ -23,6 +25,7 @@ window.onload = function() {
 	      for (let i = 0; i < width; i++) {
 	        var point = {
 	          static: j == 0,
+	          isCenter: false,
 		        x: x*(i+1),
 		        y: y + j * 100,
 		        oldx: x*(i+1),
@@ -37,7 +40,8 @@ window.onload = function() {
 	    var bottomPoints = [];
 	    for (let i = 0; i < width; i++) {
 	      var point = {
-	        static: false,
+	        static: i == 0 || i == width - 1,
+	        isCenter: false,
 		      x: x*(i+1),
 		      y: y + 100 + j * 100,
 		      oldx: x*(i+1),
@@ -50,6 +54,7 @@ window.onload = function() {
 	    for (let i = 0; i < width - 1; i++) {
 	      var middlePoint = {
 	        static: false,
+	        isCenter: true,
 		      x: x*(i+1) + 50,
 		      y: y + 50 + j * 100,
 		      oldx: x*(i+1) + 50,
@@ -72,7 +77,7 @@ window.onload = function() {
 		sticks.push({
 		  p0: start,
 		  p1: end,
-		  length: distance(start, end)
+		  length: LINELEN
 	  });
 	}
 
@@ -90,6 +95,8 @@ window.onload = function() {
 		// for(var i = 0; i < 5; i++) {
 			updateSticks();
 		// }
+		context.clearRect(0, 0, width, height);
+		renderRings();
 		renderPoints();
 		renderSticks();
 		requestAnimationFrame(update);
@@ -165,8 +172,19 @@ window.onload = function() {
 		}
 	}
 
+	function renderRings() {
+		for(var i = 0; i < points.length; i++) {
+			var p = points[i];
+			if(!p.isCenter) {
+			  continue;
+			}
+			context.beginPath();
+			context.arc(p.x, p.y, LINELEN, 0, Math.PI * 2);
+			context.stroke();
+		}
+	}
+
 	function renderPoints() {
-		context.clearRect(0, 0, width, height);
 		for(var i = 0; i < points.length; i++) {
 			var p = points[i];
 			context.beginPath();
