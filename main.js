@@ -10,56 +10,71 @@ window.onload = function() {
 		bounce = 0.9,
 		gravity = 0.5,
 		friction = 0.999;
-
-	points.push({
-	  static: true,
-		x: 100,
-		y: 100,
-		oldx: 100,
-		oldy: 100
-	});
-	points.push({
-	  static: true,
-		x: 200,
-		y: 100,
-		oldx: 200,
-		oldy: 100
-	});
-	points.push({
-	  static: false,
-		x: 200,
-		y: 200,
-		oldx: 200,
-		oldy: 200
-	});
-	points.push({
-	  static: false,
-		x: 100,
-		y: 200,
-		oldx: 100,
-		oldy: 200
-	});
-
-	sticks.push({
-		p0: points[0],
-		p1: points[1],
-		length: distance(points[0], points[1])
-	});
-	sticks.push({
-		p0: points[1],
-		p1: points[2],
-		length: distance(points[1], points[2])
-	});
-	sticks.push({
-		p0: points[2],
-		p1: points[3],
-		length: distance(points[2], points[3])
-	});
-	sticks.push({
-		p0: points[3],
-		p1: points[0],
-		length: distance(points[3], points[0])
-	});
+	
+	generate_lattice(10, 4, 100, 100)
+	
+	function generate_lattice(width, height, x ,y) {
+	  var prevTop = [];
+	
+	  for (let j = 0; j < height; j++) {
+	    var topPoints = prevTop;
+	    
+	    if(j == 0) {
+	      for (let i = 0; i < width; i++) {
+	        var point = {
+	          static: j == 0,
+		        x: x*(i+1),
+		        y: y + j * 100,
+		        oldx: x*(i+1),
+		        oldy: y + j * 100
+	        };
+	      
+	        topPoints.push(point);
+	        points.push(point);
+	      }
+	    }
+	    
+	    var bottomPoints = [];
+	    for (let i = 0; i < width; i++) {
+	      var point = {
+	        static: i == 0 || i == width-1,
+		      x: x*(i+1),
+		      y: y + 100 + j * 100,
+		      oldx: x*(i+1),
+		      oldy: y + 100 + j * 100
+	      };
+	      bottomPoints.push(point);
+	      points.push(point);
+	    }
+	    
+	    for (let i = 0; i < width - 1; i++) {
+	      var middlePoint = {
+	        static: false,
+		      x: x*(i+1) + 50,
+		      y: y + 50 + j * 100,
+		      oldx: x*(i+1) + 50,
+		      oldy: y + 50 + j * 100
+	      }
+	    
+	      points.push(middlePoint);
+	      
+	      stick(topPoints[i], middlePoint);
+	      stick(topPoints[i+1], middlePoint);
+	      stick(bottomPoints[i], middlePoint);
+	      stick(bottomPoints[i+1], middlePoint);
+	    }
+	    
+	    prevTop = bottomPoints;
+	  }
+	}
+	
+	function stick(start, end) {
+		sticks.push({
+		  p0: start,
+		  p1: end,
+		  length: distance(start, end)
+	  });
+	}
 
 	function distance(p0, p1) {
 		var dx = p1.x - p0.x,
@@ -80,9 +95,7 @@ window.onload = function() {
 		requestAnimationFrame(update);
 	}
 
-	function updatePoints() {
-	  points[1].y += gaussianRandom(-1, 1);
-	
+	function updatePoints() {	
 		for(var i = 0; i < points.length; i++) {
 			var p = points[i],
 				vx = (p.x - p.oldx) * friction;
