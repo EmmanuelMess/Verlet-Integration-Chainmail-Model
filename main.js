@@ -60,11 +60,6 @@ window.onload = function() {
 		p1: points[0],
 		length: distance(points[3], points[0])
 	});
-  sticks.push({
-	 	p0: points[0],
-	 	p1: points[2],
-	 	length: distance(points[0], points[2])
- });
 
 	function distance(p0, p1) {
 		var dx = p1.x - p0.x,
@@ -74,7 +69,7 @@ window.onload = function() {
 
 	update();
 
-	function update() {
+	function update() {	
 		updatePoints();
 			constrainPoints();
 		// for(var i = 0; i < 5; i++) {
@@ -86,6 +81,8 @@ window.onload = function() {
 	}
 
 	function updatePoints() {
+	  points[1].y += gaussianRandom(-1, 1);
+	
 		for(var i = 0; i < points.length; i++) {
 			var p = points[i],
 				vx = (p.x - p.oldx) * friction;
@@ -174,4 +171,18 @@ window.onload = function() {
 		}
 		context.stroke();
 	}
+	
+	function gaussianRand() {
+    var rand = 0;
+
+    for (var i = 0; i < 6; i += 1) {
+      rand += Math.random();
+    }
+
+    return rand / 6;
+  }
+  
+  function gaussianRandom(start, end) {
+    return Math.floor(start + gaussianRand() * (end - start + 1));
+  }
 };
