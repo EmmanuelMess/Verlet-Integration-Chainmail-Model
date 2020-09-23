@@ -204,9 +204,13 @@ window.onload = function() {
 	function renderPoints() {
 		for(var i = 0; i < points.length; i++) {
 			var p = points[i];
+			if(p.static) {
+			  context.fillStyle = "#FF0000";
+			}
 			context.beginPath();
 			context.arc(p.x, p.y, 5, 0, Math.PI * 2);
 			context.fill();
+			context.fillStyle = "#000000";
 		}
 	}
 
