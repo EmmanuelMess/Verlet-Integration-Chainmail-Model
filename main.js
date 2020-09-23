@@ -37,7 +37,7 @@ window.onload = function() {
 	    var bottomPoints = [];
 	    for (let i = 0; i < width; i++) {
 	      var point = {
-	        static: i == 0 || i == width-1,
+	        static: false,
 		      x: x*(i+1),
 		      y: y + 100 + j * 100,
 		      oldx: x*(i+1),
