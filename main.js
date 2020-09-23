@@ -12,6 +12,9 @@ window.onload = function() {
 		bounce = 0.9,
 		gravity = 0.5,
 		friction = 0.999;
+		  
+  var following = false;
+  var pointToFollow = null;
 	
 	generate_lattice(10, 4, 100, 100)
 	
@@ -59,7 +62,7 @@ window.onload = function() {
 		      y: y + 50 + j * 100,
 		      oldx: x*(i+1) + 50,
 		      oldy: y + 50 + j * 100
-	      }
+	      };
 	    
 	      points.push(middlePoint);
 	      
@@ -91,7 +94,7 @@ window.onload = function() {
 
 	function update() {	
 		updatePoints();
-			constrainPoints();
+		constrainPoints();
 		// for(var i = 0; i < 5; i++) {
 			updateSticks();
 		// }
@@ -102,7 +105,21 @@ window.onload = function() {
 		requestAnimationFrame(update);
 	}
 
+  var mouseX = null;
+  var mouseY = null;
+  document.onmousemove = handleMouseMove;
+  function handleMouseMove(event) {
+    var eventDoc, doc, body;
+    mouseX = event.x;
+    mouseY = event.y;
+  }
+
 	function updatePoints() {	
+	  if(mouseX != null && mouseY != null && following && pointToFollow != null) {
+	    pointToFollow.x = mouseX;
+	    pointToFollow.y = mouseY;
+	  }
+	
 		for(var i = 0; i < points.length; i++) {
 			var p = points[i],
 				vx = (p.x - p.oldx) * friction;
@@ -216,4 +233,25 @@ window.onload = function() {
   function gaussianRandom(start, end) {
     return Math.floor(start + gaussianRand() * (end - start + 1));
   }
+  
+  document.onclick = function(event) {
+    if(following) {
+      following = !following;
+      pointToFollow = null;
+      return;
+    }
+    
+    var eventPoint = {
+      x: event.x,
+      y: event.y
+    };
+    
+    for (let i = 0; i < points.length; i++) {
+      if(distance(points[i], eventPoint) <= 5) {
+        pointToFollow = points[i];
+        following = true;
+        break;
+      }
+    }
+  };
 };
