@@ -10,7 +10,7 @@ window.onload = function() {
 	var points = [],
 		sticks = [],
 		bounce = 0.9,
-		gravity = 0.5,
+		gravity = 1.1,
 		friction = 0.999;
 		  
   var following = false;
